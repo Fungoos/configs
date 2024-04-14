@@ -1,0 +1,58 @@
+{
+  "log": {
+    "loglevel": "warning",
+    "error": "/var/log/xray/error.log", //If V2Ray is used, the directory name xray here is changed to v2ray.
+    "access": "/var/log/xray/access.log" //If V2Ray is used, the directory name xray here is changed to v2ray.
+  },
+  "inbounds": [
+    {
+      "listen": "127.0.0.1", //Only monitor the local machine to prevent machines outside the local machine from detecting the following ports.
+      "port": 2006, //Trojan+H2C listening port
+      "protocol": "trojan",
+      "settings": {
+        "clients": [
+          {
+            "password":"diy2006", //Change to your own password
+            "email": "2006@gmail.com"
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "h2",
+        "security": "none",
+        "httpSettings": {
+          "path": "/teuW56Es" //Change to your own path
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "blocked"
+      }
+    ]
+  },
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "tag": "blocked",
+      "protocol": "blackhole",
+      "settings": {}
+    }
+  ]
+}
