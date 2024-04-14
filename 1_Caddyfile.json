@@ -1,0 +1,44 @@
+{
+	order reverse_proxy before route
+	admin off
+	persist_config off
+	log {
+		output file /var/log/caddy/default.log
+		format console
+		level WARN
+	} #Log global configuration is only supported if the version is no less than v2.4.0
+	email your@email.com #Change to your own email address.  (optional)
+
+	servers :443 {
+		protocols h1 h2 #TLSv1.2 does not support HTTP/3 server
+	}
+}
+
+:443, xx.yy { Change #xx.yy to your own domain name. Note: There is a space between the comma and the domain name.
+	tls {
+		protocols tls1.2 tls1.2
+		ciphers TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 #Cipher suites for non-AES algorithms
+		curves secp521r1 secp384r1 secp256r1
+	}
+
+	reverse_proxy /teuW56Es 127.0.0.1:2006 { #Corresponds to the path in the Trojan+H2C application and is forwarded to the local Trojan+H2C listening port.
+		transport http {
+			versions h2c 2
+		}
+	}
+
+	@host {
+		host xx.yy #Restrict domain name access (including prohibiting access to the website through IP), change it to your own domain name.
+	}
+	route @host {
+		header {
+			Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" # enableHSTS
+		}
+		file_server {
+			root /var/www/html #Change to the path of your own WEB file
+		}
+	}
+}
+#Remark:
+#1. This configuration only supports applying for ordinary TLS certificates. If you want to apply for a wildcard TLS certificate, please refer to the corresponding introduction and corresponding configuration examples in 'Caddy (Other Configuration) (Caddy's special application configuration method.)'.
+#2. This example uses a non-AES algorithm cipher suite configuration to avoid being blocked.

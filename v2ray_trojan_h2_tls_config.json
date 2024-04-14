@@ -1,0 +1,65 @@
+{
+  "log": {},
+  "inbounds": [
+    {
+      "port": "1080",
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": true
+      }
+    },
+    {
+      "port": "1081",
+      "protocol": "http",
+      "settings": {}
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "trojan",
+      "settings": {
+        "servers": [
+          {
+            "address": "xx.yy", //Modify the domain name assigned to the server
+            "port": 443,
+            "password": "diy443", //Change the password configured for the server
+          }
+        ]
+      },
+      "streamSettings": {
+        "security": "tls",
+        "tlsSettings": {
+          "fingerprint": "chrome" //Simulate TLS fingerprint and can be configured with any chrome, firefox, safari, ios, edge, qq, random, and randomized options.
+        }, //This application is only supported by Xray, otherwise this part of the configuration must be removed.
+        "network": "h2",
+        "httpSettings": {
+          "path": "/teuW56Es" //Modify to the path configured on the server side
+        }
+      }
+    },
+    {
+      "tag": "direct", //If you want to use routing, this tag must be present. Here, direct is a label for freedom.
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ],
+  "routing": {
+    "domainStrategy": "IPOnDemand",
+    "rules": [
+      {
+        "type": "field",
+        "outboundTag": "direct", //Corresponds to the above tag
+        "domain": ["geosite:cn"] //Domain names of mainstream websites in mainland China
+      },
+      {
+        "type": "field",
+        "outboundTag": "direct", //Corresponds to the above tag
+        "ip": [
+          "geoip:cn", //IP of mainland China
+          "geoip:private" //Private address IP, such as router, etc.
+        ]
+      }
+    ]
+  }
+}
